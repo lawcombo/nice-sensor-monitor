@@ -251,7 +251,6 @@ body{
 .detail-list{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .detail-btn{min-height:44px;border:1px solid var(--border);background:var(--bg-card);border-radius:14px;padding:10px;font-size:11px;font-weight:800;color:var(--text1);font-family:inherit;cursor:pointer;text-align:left;}
 .detail-btn:active{background:var(--bg-input);}
-.example-box{margin-top:12px;background:var(--bg-input);border:1px solid var(--border);border-radius:16px;padding:13px;font-size:11px;line-height:1.55;color:var(--text2);}
 .form-grid{display:grid;gap:10px;}
 .field label{display:block;font-size:10px;font-weight:800;color:var(--text2);letter-spacing:.2px;margin:0 0 6px 2px;}
 .input,.select,.textarea{width:100%;border:1px solid var(--border);background:var(--bg-input);border-radius:13px;padding:11px 12px;font-family:inherit;font-size:12px;font-weight:600;color:var(--text1);outline:none;}
@@ -637,7 +636,6 @@ function renderConvenienceDetail(id){
     <div class="card">
       <div class="card-head"><div class="card-title">${c.ico} ${c.title}</div></div>
       <div class="conv-desc">${c.desc}</div>
-      <div class="example-box">예시: ${c.examples}</div>
     </div>
     <div class="sec">세부항목</div>
     <div class="card"><div class="detail-list">
