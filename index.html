@@ -236,6 +236,41 @@ body{
 .ni-src{font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;background:var(--bg-input);color:var(--text2);}
 .ni-dot{width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px;}
 .done-lbl{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
+/* CONVENIENCE */
+.conv-grid{display:grid;grid-template-columns:1fr;gap:10px;}
+.conv-card{background:var(--bg-card);border-radius:20px;padding:16px;box-shadow:var(--sh1);border:1px solid var(--border);cursor:pointer;transition:box-shadow .15s,transform .12s;display:flex;gap:13px;align-items:flex-start;}
+.conv-card:active{transform:scale(.98);box-shadow:none;}
+.conv-ico{width:42px;height:42px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.conv-info{flex:1;min-width:0;}
+.conv-title{font-size:13px;font-weight:800;color:var(--text1);}
+.conv-desc{font-size:11px;color:var(--text2);margin-top:4px;line-height:1.45;}
+.conv-arrow{font-size:16px;color:var(--text3);margin-top:10px;}
+.chip-grid{display:flex;gap:8px;flex-wrap:wrap;}
+.chip{border:none;border-radius:10px;background:var(--bg-input);color:var(--text2);font-size:11px;font-weight:800;padding:8px 10px;font-family:inherit;cursor:pointer;}
+.chip:active{opacity:.7;}
+.detail-list{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.detail-btn{min-height:44px;border:1px solid var(--border);background:var(--bg-card);border-radius:14px;padding:10px;font-size:11px;font-weight:800;color:var(--text1);font-family:inherit;cursor:pointer;text-align:left;}
+.detail-btn:active{background:var(--bg-input);}
+.example-box{margin-top:12px;background:var(--bg-input);border:1px solid var(--border);border-radius:16px;padding:13px;font-size:11px;line-height:1.55;color:var(--text2);}
+.form-grid{display:grid;gap:10px;}
+.field label{display:block;font-size:10px;font-weight:800;color:var(--text2);letter-spacing:.2px;margin:0 0 6px 2px;}
+.input,.select,.textarea{width:100%;border:1px solid var(--border);background:var(--bg-input);border-radius:13px;padding:11px 12px;font-family:inherit;font-size:12px;font-weight:600;color:var(--text1);outline:none;}
+.textarea{min-height:76px;resize:none;line-height:1.45;}
+.input-row{display:grid;grid-template-columns:1fr 86px 86px;gap:8px;}
+.photo-box{border:1.5px dashed var(--border2);background:var(--bg-input);border-radius:16px;padding:18px;text-align:center;font-size:11px;font-weight:700;color:var(--text2);}
+.submit-btn,.add-item-btn{width:100%;height:44px;border:none;border-radius:14px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;}
+.submit-btn{background:var(--accent);color:#fff;box-shadow:0 3px 10px rgba(79,70,229,.25);}
+.add-item-btn{background:var(--accent-lt);color:var(--accent);border:1px solid #c7d2fe;}
+.submit-btn:active,.add-item-btn:active{opacity:.75;}
+.complete-msg{display:none;margin-bottom:12px;background:var(--green-lt);border:1px solid #a7f3d0;color:var(--green-dk);border-radius:16px;padding:13px;font-size:12px;font-weight:800;text-align:center;}
+.complete-msg.show{display:block;}
+.hist-item{padding:13px 0;border-bottom:1px solid var(--border);}
+.hist-item:first-child{padding-top:0;}
+.hist-item:last-child{border-bottom:none;padding-bottom:0;}
+.hist-top{display:flex;justify-content:space-between;gap:8px;align-items:center;}
+.hist-title{font-size:12px;font-weight:800;color:var(--text1);}
+.hist-meta{font-size:10px;color:var(--text2);margin-top:5px;line-height:1.45;}
+.back-link{font-size:11px;font-weight:800;color:var(--accent);cursor:pointer;}
 /* BOTTOM NAV */
 .bottom-nav{
   position:absolute;bottom:0;left:0;right:0;height:88px;
@@ -497,6 +532,15 @@ body{
       </div>
     </div>
 
+    <!-- ========== CONVENIENCE ========== -->
+    <div class="page" id="pg-convenience">
+      <div class="content">
+        <div class="complete-msg" id="conv-complete">신청이 접수되었습니다.</div>
+        <div id="conv-view"></div>
+        <div style="height:8px;"></div>
+      </div>
+    </div>
+
   </div><!-- /scroll-area -->
 
   <!-- BOTTOM NAV -->
@@ -512,6 +556,9 @@ body{
     </div>
     <div class="nav-btn" id="nav-reserve" onclick="navTo('reserve')">
       <div class="nav-ico">🛎</div><div class="nav-txt">예약</div>
+    </div>
+    <div class="nav-btn" id="nav-convenience" onclick="navTo('convenience')">
+      <div class="nav-ico">🧰</div><div class="nav-txt">편의</div>
     </div>
     <div class="nav-btn" id="nav-notify" onclick="navTo('notify')">
       <div class="nav-ico">🔔</div><div class="nav-txt">알림</div>
@@ -529,11 +576,131 @@ function navTo(id){
   document.getElementById('pg-'+id).classList.add('active');
   document.getElementById('nav-'+id).classList.add('on');
   document.getElementById('main-scroll').scrollTop=0;
+  if(id==='convenience'&&!document.getElementById('conv-view').innerHTML.trim()) renderConvenienceHome();
 }
 /* TAB */
 function switchTab(el){
   el.closest('.tab-bar').querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
+}
+/* CONVENIENCE */
+const convCats=[
+  {id:'supplies',ico:'📦',tone:'#eef2ff',title:'비품·소모품',desc:'객실 비품, 수건, 소모품을 요청하세요.',items:['객실 어메니티','욕실 소모품','객실 기본 비품','청소 소모품','전기 소모품','프런트 소모품','린넨/수건류'],examples:'칫솔, 치약, 면도기, 샴푸, 생수, 종이컵, 건전지, 전구, 카드키, 수건, 가운'},
+  {id:'repair',ico:'🛠️',tone:'#fffbeb',title:'잔고장·수리',desc:'전구, 욕실, 도어락, 가전 수리를 요청하세요.',items:['전기/조명','욕실/배수','도어락/출입','객실 가전','냉난방/온수','가구/시설','인터넷/공유기','주차장 설비'],examples:'전구 교체, 콘센트 불량, 변기 막힘, 샤워기 고장, 도어락 방전, TV 고장, 와이파이 불량'},
+  {id:'hygiene',ico:'✨',tone:'#ecfdf5',title:'위생·방역',desc:'냄새, 곰팡이, 해충, 소독을 요청하세요.',items:['객실 탈취','욕실 악취','곰팡이 관리','에어컨 케어','매트리스 케어','해충 방역','쓰레기장 방역','정기 소독'],examples:'담배 냄새, 하수구 냄새, 욕실 곰팡이, 에어컨 필터, 매트리스 진드기, 바퀴벌레, 정기 방역'},
+  {id:'waste',ico:'🗑️',tone:'#fef2f2',title:'폐기물 처리',desc:'대형폐기물, 폐가전, 불용품 수거를 요청하세요.',items:['대형폐기물','폐가전','폐침구','대량 재활용','음식물/악취 폐기','쓰레기장 정리','불용 비품 처리'],examples:'매트리스, 침대 프레임, 의자, TV, 냉장고, 낡은 이불, 술병, 음식물 쓰레기, 파손 비품'},
+  {id:'safety',ico:'🛡️',tone:'#eff6ff',title:'안전·시설 점검',desc:'소방, CCTV, 누수, 전기 점검을 요청하세요.',items:['소방설비','CCTV','전기 안전','누수 점검','출입 시설','주차장 설비','보일러/온수','외부 시설'],examples:'소화기, 감지기, CCTV 녹화, 카메라 각도, 차단기, 콘센트, 누수, 비상구, 간판 조명'}
+];
+const convQuick=['생수 500ml 5박스','칫솔세트 100개','전구 교체','배수구 냄새 제거','에어컨 필터 청소'];
+const convRegular=['비품 정기배송','월 정기 방역','월 시설 점검','분기 에어컨 케어','월 배수구 악취 관리'];
+const convHistory=[
+  {date:'06/04',cat:'비품·소모품',item:'객실 어메니티',loc:'프런트',st:'신청접수',cls:'b-blue',visit:'06/06 오전',result:'접수 확인 대기'},
+  {date:'06/03',cat:'잔고장·수리',item:'전기/조명',loc:'305호',st:'방문예정',cls:'b-amber',visit:'06/05 오후',result:'기사 방문 예정'},
+  {date:'06/02',cat:'위생·방역',item:'욕실 악취',loc:'203호',st:'처리중',cls:'b-red',visit:'06/04 야간',result:'원인 확인 중'},
+  {date:'05/30',cat:'안전·시설 점검',item:'CCTV',loc:'주차장',st:'완료',cls:'b-green',visit:'05/31 오후',result:'녹화 장비 점검 완료'}
+];
+function convComplete(show=false){
+  const el=document.getElementById('conv-complete');
+  el.classList.toggle('show',show);
+}
+function renderConvenienceHome(){
+  convComplete(false);
+  const v=document.getElementById('conv-view');
+  v.innerHTML=`
+    <div class="sec">편의 신청</div>
+    <div class="conv-grid">
+      ${convCats.map(c=>`<div class="conv-card" onclick="renderConvenienceDetail('${c.id}')">
+        <div class="conv-ico" style="background:${c.tone};">${c.ico}</div>
+        <div class="conv-info"><div class="conv-title">${c.title}</div><div class="conv-desc">${c.desc}</div></div>
+        <div class="conv-arrow">›</div>
+      </div>`).join('')}
+    </div>
+    <div class="sec">자주 신청</div>
+    <div class="card"><div class="chip-grid">${convQuick.map(q=>`<button class="chip" onclick="renderConvenienceForm('supplies','${q}')">${q}</button>`).join('')}</div></div>
+    <div class="sec">정기관리</div>
+    <div class="card"><div class="chip-grid">${convRegular.map(q=>`<button class="chip" onclick="renderConvenienceForm('hygiene','${q}')">${q}</button>`).join('')}</div></div>
+    <div class="sec">신청내역</div>
+    <div class="card" style="padding:16px;">${renderConvenienceHistory()}</div>
+  `;
+}
+function renderConvenienceHistory(){
+  return convHistory.map(h=>`<div class="hist-item">
+    <div class="hist-top"><div class="hist-title">${h.cat} · ${h.item}</div><div class="badge ${h.cls}">${h.st}</div></div>
+    <div class="hist-meta">신청일 ${h.date} · 위치 ${h.loc}<br>방문 예정 ${h.visit} · ${h.result}</div>
+  </div>`).join('');
+}
+function renderConvenienceDetail(id){
+  convComplete(false);
+  const c=convCats.find(x=>x.id===id);
+  document.getElementById('conv-view').innerHTML=`
+    <div class="sec"><span class="back-link" onclick="renderConvenienceHome()">← 편의</span></div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">${c.ico} ${c.title}</div></div>
+      <div class="conv-desc">${c.desc}</div>
+      <div class="example-box">예시: ${c.examples}</div>
+    </div>
+    <div class="sec">세부항목</div>
+    <div class="card"><div class="detail-list">
+      ${c.items.map(it=>`<button class="detail-btn" onclick="renderConvenienceForm('${c.id}','${it}')">${it}</button>`).join('')}
+    </div></div>
+  `;
+  document.getElementById('main-scroll').scrollTop=0;
+}
+function renderConvenienceForm(id,item){
+  convComplete(false);
+  const c=convCats.find(x=>x.id===id)||convCats[0];
+  const isSupply=c.id==='supplies';
+  document.getElementById('conv-view').innerHTML=`
+    <div class="sec"><span class="back-link" onclick="renderConvenienceDetail('${c.id}')">← ${c.title}</span></div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">${item} 신청</div></div>
+      ${isSupply?renderSupplyForm(item):renderGeneralForm(c.title,item)}
+    </div>
+  `;
+  document.getElementById('main-scroll').scrollTop=0;
+}
+function renderSupplyForm(item){
+  return `<div class="form-grid">
+    <div class="field"><label>업소명</label><input class="input" value="H STAY 강남점"></div>
+    <div id="supply-items">${supplyItemRow(item)}</div>
+    <button class="add-item-btn" onclick="addSupplyItem()" type="button">품목 추가</button>
+    <div class="field"><label>배송 희망일</label><input class="input" type="date"></div>
+    <div class="field"><label>정기배송 여부</label><select class="select"><option>1회</option><option>매주</option><option>매월</option></select></div>
+    <div class="field"><label>배송 요청사항</label><textarea class="textarea" placeholder="보관 위치나 배송 요청사항을 입력하세요."></textarea></div>
+    <button class="submit-btn" onclick="submitConvenienceRequest()" type="button">신청</button>
+  </div>`;
+}
+function supplyItemRow(item=''){
+  return `<div class="input-row" style="margin-bottom:8px;">
+    <input class="input" placeholder="품목명" value="${item}">
+    <input class="input" type="number" min="1" placeholder="수량">
+    <select class="select"><option>개</option><option>박스</option><option>묶음</option><option>장</option><option>세트</option></select>
+  </div>`;
+}
+function addSupplyItem(){
+  document.getElementById('supply-items').insertAdjacentHTML('beforeend',supplyItemRow());
+}
+function renderGeneralForm(cat,item){
+  return `<div class="form-grid">
+    <div class="field"><label>업소명</label><input class="input" value="H STAY 강남점"></div>
+    <div class="field"><label>요청 위치</label><select class="select"><option>객실</option><option>공용공간</option><option>주차장</option><option>외부</option><option>기계실</option><option>기타</option></select></div>
+    <div class="field"><label>객실번호 또는 상세 위치</label><input class="input" placeholder="예: 305호 욕실, B1 주차장 입구"></div>
+    <div class="field"><label>요청 항목</label><input class="input" value="${cat} · ${item}"></div>
+    <div class="field"><label>긴급도</label><select class="select"><option>일반</option><option>빠름</option><option>긴급</option></select></div>
+    <div class="field"><label>요청 내용</label><textarea class="textarea" placeholder="증상이나 요청 내용을 입력하세요."></textarea></div>
+    <div class="field"><label>사진 첨부</label><div class="photo-box">사진을 첨부하거나 촬영해 주세요.</div></div>
+    <div class="field"><label>희망 방문일</label><input class="input" type="date"></div>
+    <div class="field"><label>희망 시간대</label><select class="select"><option>오전</option><option>오후</option><option>야간</option></select></div>
+    <div class="field"><label>담당자 연락처</label><input class="input" type="tel" placeholder="010-0000-0000"></div>
+    <div class="field"><label>요청 메모</label><textarea class="textarea" placeholder="방문 전 참고할 내용을 입력하세요."></textarea></div>
+    <button class="submit-btn" onclick="submitConvenienceRequest()" type="button">신청</button>
+  </div>`;
+}
+function submitConvenienceRequest(){
+  alert('신청이 접수되었습니다.');
+  renderConvenienceHome();
+  convComplete(true);
+  document.getElementById('main-scroll').scrollTop=0;
 }
 /* ROOM GRID */
 const rooms=[
