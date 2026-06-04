@@ -263,13 +263,23 @@ body{
 .submit-btn:active,.add-item-btn:active{opacity:.75;}
 .complete-msg{display:none;margin-bottom:12px;background:var(--green-lt);border:1px solid #a7f3d0;color:var(--green-dk);border-radius:16px;padding:13px;font-size:12px;font-weight:800;text-align:center;}
 .complete-msg.show{display:block;}
-.hist-item{padding:13px 0;border-bottom:1px solid var(--border);}
+.hist-item{padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;}
 .hist-item:first-child{padding-top:0;}
 .hist-item:last-child{border-bottom:none;padding-bottom:0;}
+.hist-item:active{opacity:.7;}
 .hist-top{display:flex;justify-content:space-between;gap:8px;align-items:center;}
 .hist-title{font-size:12px;font-weight:800;color:var(--text1);}
 .hist-meta{font-size:10px;color:var(--text2);margin-top:5px;line-height:1.45;}
 .back-link{font-size:11px;font-weight:800;color:var(--accent);cursor:pointer;}
+.detail-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.detail-mini{background:var(--bg-input);border:1px solid var(--border);border-radius:14px;padding:11px;}
+.dm-lbl{font-size:10px;font-weight:800;color:var(--text3);margin-bottom:4px;}
+.dm-val{font-size:12px;font-weight:800;color:var(--text1);line-height:1.35;}
+.process-note{background:var(--bg-input);border:1px solid var(--border);border-radius:16px;padding:13px;font-size:11px;line-height:1.55;color:var(--text2);}
+.evidence-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.evidence-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.evidence-card img{width:100%;height:94px;object-fit:cover;display:block;background:var(--bg-input);}
+.evidence-cap{padding:9px 10px;font-size:10px;font-weight:800;color:var(--text2);}
 /* BOTTOM NAV */
 .bottom-nav{
   position:absolute;bottom:0;left:0;right:0;height:88px;
@@ -593,10 +603,10 @@ const convCats=[
 const convQuick=['생수 500ml 5박스','칫솔세트 100개','전구 교체','배수구 냄새 제거','에어컨 필터 청소'];
 const convRegular=['비품 정기배송','월 정기 방역','월 시설 점검','분기 에어컨 케어','월 배수구 악취 관리'];
 const convHistory=[
-  {date:'06/04',cat:'비품·소모품',item:'객실 어메니티',loc:'프런트',st:'신청접수',cls:'b-blue',visit:'06/06 오전',result:'접수 확인 대기'},
-  {date:'06/03',cat:'잔고장·수리',item:'전기/조명',loc:'305호',st:'방문예정',cls:'b-amber',visit:'06/05 오후',result:'기사 방문 예정'},
-  {date:'06/02',cat:'위생·방역',item:'욕실 악취',loc:'203호',st:'처리중',cls:'b-red',visit:'06/04 야간',result:'원인 확인 중'},
-  {date:'05/30',cat:'안전·시설 점검',item:'CCTV',loc:'주차장',st:'완료',cls:'b-green',visit:'05/31 오후',result:'녹화 장비 점검 완료'}
+  {date:'06/04',cat:'비품·소모품',item:'객실 어메니티',loc:'프런트',st:'신청접수',cls:'b-blue',visit:'06/06 오전',result:'접수 확인 대기',company:'NICE업체',manager:'홍길동',phone:'01012341234',handledAt:'배정 전',work:'요청 품목과 수량을 확인한 뒤 담당 업체를 배정할 예정입니다.',images:['https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=500&auto=format&fit=crop','https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=500&auto=format&fit=crop']},
+  {date:'06/03',cat:'잔고장·수리',item:'전기/조명',loc:'305호',st:'방문예정',cls:'b-amber',visit:'06/05 오후',result:'기사 방문 예정',company:'NICE시설관리',manager:'홍길동',phone:'01012341234',handledAt:'06/05 오후 예정',work:'305호 조명 스위치와 전구 상태를 점검하고 현장에서 교체 가능 여부를 확인할 예정입니다.',images:['https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=500&auto=format&fit=crop','https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=500&auto=format&fit=crop']},
+  {date:'06/02',cat:'위생·방역',item:'욕실 악취',loc:'203호',st:'처리중',cls:'b-red',visit:'06/04 야간',result:'원인 확인 중',company:'NICE방역케어',manager:'홍길동',phone:'01012341234',handledAt:'06/04 21:10 진행중',work:'배수구 트랩과 환기 상태를 확인 중이며, 악취 제거제를 1차 시공했습니다. 추가 환기 후 재확인 예정입니다.',images:['https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&auto=format&fit=crop','https://images.unsplash.com/photo-1563453392212-326f5e854473?w=500&auto=format&fit=crop']},
+  {date:'05/30',cat:'안전·시설 점검',item:'CCTV',loc:'주차장',st:'완료',cls:'b-green',visit:'05/31 오후',result:'녹화 장비 점검 완료',company:'NICE보안설비',manager:'홍길동',phone:'01012341234',handledAt:'05/31 16:40 완료',work:'주차장 CCTV 녹화 상태와 카메라 각도를 점검했습니다. 2번 카메라 각도를 조정했고 녹화 상태 정상 확인했습니다.',images:['https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=500&auto=format&fit=crop','https://images.unsplash.com/photo-1558002038-1055907df827?w=500&auto=format&fit=crop']}
 ];
 function convComplete(show=false){
   const el=document.getElementById('conv-complete');
@@ -623,10 +633,34 @@ function renderConvenienceHome(){
   `;
 }
 function renderConvenienceHistory(){
-  return convHistory.map(h=>`<div class="hist-item">
+  return convHistory.map((h,i)=>`<div class="hist-item" onclick="renderConvenienceHistoryDetail(${i})">
     <div class="hist-top"><div class="hist-title">${h.cat} · ${h.item}</div><div class="badge ${h.cls}">${h.st}</div></div>
     <div class="hist-meta">신청일 ${h.date} · 위치 ${h.loc}<br>방문 예정 ${h.visit} · ${h.result}</div>
   </div>`).join('');
+}
+function renderConvenienceHistoryDetail(i){
+  convComplete(false);
+  const h=convHistory[i];
+  document.getElementById('conv-view').innerHTML=`
+    <div class="sec"><span class="back-link" onclick="renderConvenienceHome()">← 신청내역</span></div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">${h.cat} · ${h.item}</div><div class="badge ${h.cls}">${h.st}</div></div>
+      <div class="detail-summary">
+        <div class="detail-mini"><div class="dm-lbl">업체</div><div class="dm-val">${h.company}</div></div>
+        <div class="detail-mini"><div class="dm-lbl">담당자</div><div class="dm-val">${h.manager}</div></div>
+        <div class="detail-mini"><div class="dm-lbl">연락처</div><div class="dm-val">${h.phone}</div></div>
+        <div class="detail-mini"><div class="dm-lbl">처리일시</div><div class="dm-val">${h.handledAt}</div></div>
+        <div class="detail-mini"><div class="dm-lbl">요청 위치</div><div class="dm-val">${h.loc}</div></div>
+        <div class="detail-mini"><div class="dm-lbl">방문 예정</div><div class="dm-val">${h.visit}</div></div>
+      </div>
+      <div class="process-note">${h.work}</div>
+    </div>
+    <div class="sec">증거 이미지</div>
+    <div class="evidence-grid">
+      ${h.images.map((img,idx)=>`<div class="evidence-card"><img src="${img}" alt="처리 증거 이미지 ${idx+1}"><div class="evidence-cap">${idx===0?'현장 확인':'처리 기록'}</div></div>`).join('')}
+    </div>
+  `;
+  document.getElementById('main-scroll').scrollTop=0;
 }
 function renderConvenienceDetail(id){
   convComplete(false);
